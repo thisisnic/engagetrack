@@ -4,6 +4,7 @@ from app.models import Repo, save_repo, delete_repo, fetch_all_repos
 from app.fetcher import fetch_metrics
 import requests
 import asyncio  
+from datetime import datetime
 
 BASE_API_URL = "http://127.0.0.1:5000"
 
@@ -35,10 +36,11 @@ def delete_repo_by_id(repo_id):
         return jsonify({"message": f"Repository {repo_id} deleted successfully."}), 200
     return jsonify({"error": "Repository not found."}), 404
 
+
 @app.route('/repos/<int:repo_id>/delete', methods=['POST'])
 def delete_repo(repo_id):
     # Fetch the repository by ID
-    repo = Repo.query.get_or_404(repo_id)
+    repo = db.session.get(Repo, repo_id)
 
     try:
         db.session.delete(repo)
@@ -107,6 +109,8 @@ def list_repos():
     repos = Repo.query.all()
     return render_template('repo_list.html', repos=repos)
 
+@app.route('/repos', methods=['GET'])
+
 @app.route('/repos/<int:repo_id>/metrics', methods=['GET'])
 def show_metrics(repo_id):
     # Fetch the repository by its ID
@@ -128,3 +132,23 @@ def show_metrics(repo_id):
     else:
         flash("Failed to fetch metrics from the API.", "danger")
         return redirect(url_for('list_repos'))
+
+@app.route('/repos/<int:repo_id>/refresh', methods=['POST'])
+def refresh_metrics(repo_id):
+    # Fetch the repository by ID
+    repo = Repo.query.get_or_404(repo_id)
+
+    try:
+        # Refresh metrics for this repository
+        metrics = asyncio.run(fetch_metrics([repo.url]))
+        if metrics:
+            repo.last_retrieved = datetime.utcnow() 
+            db.session.commit()  
+            flash(f"Metrics for {repo.name} refreshed successfully!", "success")
+        else:
+            flash(f"Failed to refresh metrics for {repo.name}.", "warning")
+    except Exception as e:
+        db.session.rollback()  
+        flash(f"An error occurred while refreshing metrics: {e}", "danger")
+
+    return redirect(url_for('list_repos'))

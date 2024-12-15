@@ -8,8 +8,8 @@ GITHUB_TOKEN = os.getenv('GH_API_TOKEN')
 class Repo(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(128), nullable=False)
-    url = db.Column(db.String(256), nullable=False, unique=True)
-    added_on = db.Column(db.DateTime, default=datetime.utcnow)
+    url = db.Column(db.String(256), unique=True, nullable=False)
+    last_retrieved = db.Column(db.DateTime, default=None) 
 
 def save_repo(repo_url):
     # Validate that the repository exists on GitHub
@@ -31,10 +31,11 @@ def save_repo(repo_url):
         return existing_repo  # Return the existing repo
 
     # If it doesn't exist, add it to the database
-    repo = Repo(name=repo_name, url=repo_url)
+    repo = Repo(name=repo_name, url=repo_url, last_retrieved=datetime.utcnow())
     db.session.add(repo)
     db.session.commit()
     return repo
+
 
 def delete_repo(repo_id):
     repo = Repo.query.get(repo_id)
@@ -46,4 +47,4 @@ def delete_repo(repo_id):
 
 def fetch_all_repos():
     repos = Repo.query.all()
-    return [{"id": repo.id, "name": repo.name, "url": repo.url, "added_on": repo.added_on} for repo in repos]
+    return [{"id": repo.id, "name": repo.name, "url": repo.url, "last_retrieved": repo.last_retrieved} for repo in repos]

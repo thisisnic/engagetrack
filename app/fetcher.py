@@ -56,8 +56,9 @@ async def fetch_issues(repo_url):
 async def fetch_metrics(repo_urls):
     tasks = []
     for repo_url in repo_urls:
-        tasks.append(fetch_contributors(repo_url))
+        tasks.append(fetch_contributors(repo_url))  
     results = await asyncio.gather(*tasks)
+
     metrics = []
     for i, repo_url in enumerate(repo_urls):
         contributors = results[i]
