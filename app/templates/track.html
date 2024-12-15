@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h1 class="text-center">Track a GitHub Repository</h1>
+<p class="text-muted text-center">Enter a repository URL (e.g., <code>octocat/Hello-World</code>) to view contributor metrics.</p>
+
+<form method="POST" action="{{ url_for('track_repo') }}" class="mt-4">
+    <div class="mb-3">
+        <label for="repo_url" class="form-label">Repository URL</label>
+        <input type="text" id="repo_url" name="repo_url" class="form-control" placeholder="e.g., octocat/Hello-World" required>
+    </div>
+    <button type="submit" class="btn btn-primary w-100">Track Repository</button>
+</form>
+
+<div class="mt-4 text-center">
+    <a href="{{ url_for('index') }}" class="btn btn-secondary">Back to Main Page</a>
+</div>
+{% endblock %}

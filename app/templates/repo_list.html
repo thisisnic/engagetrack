@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h1 class="text-center">Tracked Repositories</h1>
+<p class="text-muted text-center">Click on a repository to view its metrics or delete it from the list.</p>
+
+<table class="table table-striped mt-4">
+    <thead>
+        <tr>
+            <th>#</th>
+            <th>Repository Name</th>
+            <th>URL</th>
+            <th>Added On</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for repo in repos %}
+        <tr>
+            <td>{{ repo.id }}</td>
+            <td>{{ repo.name }}</td>
+            <td><a href="https://github.com/{{ repo.url }}" target="_blank">{{ repo.url }}</a></td>
+            <td>{{ repo.added_on }}</td>
+            <td class="d-flex">
+                <a href="{{ url_for('show_metrics', repo_id=repo.id) }}" class="btn btn-primary btn-sm me-2">View Metrics</a>
+                <form method="POST" action="{{ url_for('delete_repo', repo_id=repo.id) }}" onsubmit="return confirm('Are you sure you want to delete this repository?');">
+                    <button type="submit" class="btn btn-danger btn-sm">Delete</button>
+                </form>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<a href="{{ url_for('track_repo') }}" class="btn btn-secondary mt-4">Track a New Repository</a>
+{% endblock %}

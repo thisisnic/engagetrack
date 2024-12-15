@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="text-center">
+    <h1 class="text-primary">Welcome to EngageTrack!</h1>
+    <p class="lead">Your tool for tracking and visualizing GitHub community engagement.</p>
+    <p class="text-muted">Use the API endpoints to interact with the application:</p>
+
+    <ul class="list-group list-group-flush text-start mt-4">
+        <li class="list-group-item"><strong>POST /repos</strong>: Add a repository to track.</li>
+        <li class="list-group-item"><strong>GET /repos</strong>: List all tracked repositories.</li>
+        <li class="list-group-item"><strong>DELETE /repos/&lt;id&gt;</strong>: Remove a repository.</li>
+        <li class="list-group-item"><strong>GET /metrics</strong>: Fetch engagement metrics.</li>
+    </ul>
+
+    <div class="mt-4">
+        <a href="{{ url_for('track_repo') }}" class="btn btn-primary btn-lg">Track a Repository</a>
+        <a href="{{ url_for('list_repos') }}" class="btn btn-secondary btn-lg ms-2">View Tracked Repositories</a>
+    </div>
+</div>
+{% endblock %}

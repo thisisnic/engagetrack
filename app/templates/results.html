@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% block content %}
+<h1 class="text-center">Metrics for <code>{{ repo_url }}</code></h1>
+
+{% if metrics and metrics[0].contributors %}
+    <h2 class="mt-4">Top 10 Contributors (Past 3 Months)</h2>
+    <ul class="list-group">
+        {% for contributor in metrics[0].contributors %}
+            <li class="list-group-item d-flex justify-content-between align-items-center">
+                <span>{{ contributor.login }}</span>
+                <span class="badge bg-primary rounded-pill">{{ contributor.contributions }} contributions</span>
+            </li>
+        {% endfor %}
+    </ul>
+{% else %}
+    <p class="text-danger mt-4">No contributors in the past 3 months.</p>
+{% endif %}
+
+<a href="{{ url_for('track_repo') }}" class="btn btn-secondary mt-4">Track another repository</a>
+{% endblock %}
