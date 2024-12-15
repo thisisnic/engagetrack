@@ -2,15 +2,13 @@
 
 EngageTrack is a tool designed to help Open Source maintainers measure and visualise community engagement. It aggregates and analyses metrics like:
 
-- **Top contributors**: Code commits, reviews, comments.
+- **Top contributors**: Contributors by code commits
 
-Future planned features:
-
-- **Issue response times**: Average time to respond to issues or PRs.
-- **Resolution rates**: Trends of open vs. closed issues/PRs over time.
+More to be added soon!
 
 ## Features
 
+- **Flask App**: UI to interact with API
 - **Flask API**: Endpoints to manage repositories and fetch metrics.
 - **Asynchronous Data Fetching**: Efficiently gather data from GitHub.
 - **CLI Tool**: Interact with EngageTrack via the command line.
