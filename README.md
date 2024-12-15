@@ -49,7 +49,3 @@ python cli/main.py metrics octocat/Hello-World
 * Delete Repository: DELETE /repos/<repo_id>
 * Get Metrics: GET /metrics
 * Refresh Metrics for Repo POST	/repos/<repo_id>/refresh	
-
-### Contributing
-
-Contributions are welcome! Please read the CONTRIBUTING.md file for guidelines.
