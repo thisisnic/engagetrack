@@ -1,6 +1,6 @@
 # EngageTrack
 
-EngageTrack is a tool designed to help Open Source maintainers measure and visualize community engagement. It aggregates and analyzes metrics like:
+EngageTrack is a tool designed to help Open Source maintainers measure and visualise community engagement. It aggregates and analyses metrics like:
 
 - **Top contributors**: Code commits, reviews, comments.
 
@@ -25,7 +25,7 @@ cd engagetrack
 # Install dependencies
 pip install -r requirements.txt
 
-# Initialize the database
+# Initialise the database
 python -c "from app import db; db.create_all()"
 
 # Run the Flask app
