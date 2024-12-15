@@ -11,7 +11,6 @@ More to be added soon!
 - **Flask App**: UI to interact with API
 - **Flask API**: Endpoints to manage repositories and fetch metrics.
 - **Asynchronous Data Fetching**: Efficiently gather data from GitHub.
-- **CLI Tool**: Interact with EngageTrack via the command line.
 
 ## Installation
 
@@ -30,17 +29,7 @@ python -c "from app import db; db.create_all()"
 python -c "from app import app; app.run(debug=True)"
 ```
 
-## Usage
-
-### CLI Tool
-
-## Add a repository to track
-python cli/main.py add octocat/Hello-World
-
-## Fetch engagement metrics and generate charts
-python cli/main.py metrics octocat/Hello-World
-
-### API Endpoints
+## API Endpoints
 
 * Add Repository: POST /repos
 * List Repositories: GET /repos
