@@ -1,21 +1,18 @@
 # EngageTrack
 
-EngageTrack is a tool designed to help Open Source maintainers measure and visualise community engagement. It aggregates and analyses metrics like:
-
-- **Top contributors**: Contributors by code commits
+EngageTrack is a toy project and tool designed to help Open Source maintainers measure contributors by code commits
 
 More to be added soon!
 
-## Features
+## Components 
 
-- **Flask App**: UI to interact with API
-- **Flask API**: Endpoints to manage repositories and fetch metrics.
-- **Asynchronous Data Fetching**: Efficiently gather data from GitHub.
+- Flask App
+- Flask API
 
 ## Installation
 
 ```bash
-# Clone the repository
+# Clone the repo
 git clone https://github.com/thisisnic/engagetrack.git
 cd engagetrack
 
