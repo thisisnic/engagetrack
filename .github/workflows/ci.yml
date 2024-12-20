@@ -26,6 +26,3 @@ jobs:
       - name: Run tests
         run: pytest
 
-      - name: Build package
-        run: python setup.py sdist bdist_wheel
-
