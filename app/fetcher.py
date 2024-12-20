@@ -7,6 +7,20 @@ GITHUB_TOKEN = os.getenv("GH_API_TOKEN")
 
 
 async def fetch_contributors(repo_url):
+    """
+    Fetch the top contributors for a given GitHub repository in the last 3 months.
+
+    Args:
+        repo_url (str): The GitHub repository URL in the format "owner/repo".
+
+    Returns:
+        list[dict]: A list of dictionaries containing contributor login and contribution count.
+        Example: [{"login": "user1", "contributions": 42}, ...]
+
+    Raises:
+        ValueError: If the GitHub API token is not set in the environment.
+        Exception: For API errors or rate limit issues.
+    """
     async with aiohttp.ClientSession() as session:
         try:
             if not GITHUB_TOKEN:
@@ -56,6 +70,16 @@ async def fetch_contributors(repo_url):
 
 
 async def fetch_issues(repo_url):
+    """
+    Fetch open issues for a given GitHub repository.
+
+    Args:
+        repo_url (str): The GitHub repository URL in the format "owner/repo".
+
+    Returns:
+        list[dict]: A list of issues in JSON format if successful.
+        dict: An error message dictionary if fetching issues fails.
+    """
     async with aiohttp.ClientSession() as session:
         url = f"https://api.github.com/repos/{repo_url}/issues"
         async with session.get(url) as response:
@@ -65,6 +89,16 @@ async def fetch_issues(repo_url):
 
 
 async def fetch_metrics(repo_urls):
+    """
+    Fetch metrics for multiple repositories, including top contributors.
+
+    Args:
+        repo_urls (list[str]): A list of GitHub repository URLs in the format "owner/repo".
+
+    Returns:
+        list[dict]: A list of dictionaries containing the repository URL and its contributors.
+        Example: [{"repo_url": "owner/repo", "contributors": [...]}, ...]
+    """
     tasks = []
     for repo_url in repo_urls:
         tasks.append(fetch_contributors(repo_url))

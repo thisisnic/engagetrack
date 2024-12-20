@@ -11,6 +11,16 @@ BASE_API_URL = "http://127.0.0.1:5000"
 
 @app.route("/repos", methods=["POST"])
 def add_repo():
+    """
+    Add a GitHub repository to the database by its URL.
+
+    Returns:
+        JSON response indicating success or failure.
+        HTTP Status Codes:
+            201: Repository successfully added.
+            400: Invalid request or missing URL.
+            500: Unexpected error during processing.
+    """
     data = request.get_json()
     repo_url = data.get("repo_url")
     print(f"Received repo_url: {repo_url}")  # Debug log
@@ -35,6 +45,18 @@ def add_repo():
 
 @app.route("/repos/<int:repo_id>", methods=["DELETE"])
 def delete_repo_by_id(repo_id):
+    """
+    Delete a repository by its ID.
+
+    Args:
+        repo_id (int): The ID of the repository to delete.
+
+    Returns:
+        JSON response indicating success or failure.
+        HTTP Status Codes:
+            200: Repository successfully deleted.
+            404: Repository not found.
+    """
     if delete_repo(repo_id):
         return jsonify({"message": f"Repository {repo_id} deleted successfully."}), 200
     return jsonify({"error": "Repository not found."}), 404
@@ -42,7 +64,15 @@ def delete_repo_by_id(repo_id):
 
 @app.route("/repos/<int:repo_id>/delete", methods=["POST"])
 def delete_repo(repo_id):
-    # Fetch the repository by ID
+    """
+    Delete a repository via a POST request and redirect to the repository list page.
+
+    Args:
+        repo_id (int): The ID of the repository to delete.
+
+    Returns:
+        Redirect to the repository list page.
+    """
     repo = db.session.get(Repo, repo_id)
 
     try:
@@ -58,21 +88,44 @@ def delete_repo(repo_id):
 
 @app.route("/metrics", methods=["GET"])
 def get_metrics():
+    """
+    Fetch metrics for all repositories.
+
+    Returns:
+        JSON response with metrics data.
+        HTTP Status Codes:
+            200: Metrics successfully fetched.
+    """
     repos = fetch_all_repos()
     repo_urls = [repo["url"] for repo in repos]
 
-    # Fetch metrics for all repositories
     metrics = asyncio.run(fetch_metrics(repo_urls))
     return jsonify(metrics), 200
 
 
 @app.route("/")
 def index():
+    """
+    Render the index page.
+
+    Returns:
+        HTML template for the index page.
+    """
     return render_template("index.html")
 
 
 @app.route("/track", methods=["GET", "POST"])
 def track_repo():
+    """
+    Track a new GitHub repository and optionally display its metrics.
+
+    Methods:
+        GET: Render the tracking page.
+        POST: Add a repository and fetch its metrics.
+
+    Returns:
+        HTML template for the tracking or results page.
+    """
     if request.method == "POST":
         repo_url = request.form.get("repo_url")
         print(f"Received repo_url from form: {repo_url}")  # Debug log
@@ -82,7 +135,6 @@ def track_repo():
             return redirect(url_for("track_repo"))
 
         try:
-            # Send the repo URL to the /repos endpoint
             response = requests.post(
                 f"{BASE_API_URL}/repos", json={"repo_url": repo_url}
             )
@@ -92,7 +144,6 @@ def track_repo():
 
             if response.status_code == 201:
                 flash("Repository added successfully!", "success")
-                # Fetch metrics for the specific repository
                 metrics_response = requests.get(f"{BASE_API_URL}/metrics")
                 if metrics_response.status_code == 200:
                     metrics = metrics_response.json()
@@ -119,7 +170,12 @@ def track_repo():
 
 @app.route("/repos/list", methods=["GET"])
 def list_repos():
-    # Fetch all repositories from the database
+    """
+    Display a list of all tracked repositories.
+
+    Returns:
+        HTML template with the list of repositories.
+    """
     repos = Repo.query.all()
     return render_template("repo_list.html", repos=repos)
 
@@ -127,15 +183,20 @@ def list_repos():
 @app.route("/repos", methods=["GET"])
 @app.route("/repos/<int:repo_id>/metrics", methods=["GET"])
 def show_metrics(repo_id):
-    # Fetch the repository by its ID
+    """
+    Show metrics for a specific repository by its ID.
+
+    Args:
+        repo_id (int): The ID of the repository.
+
+    Returns:
+        HTML template with the repository's metrics.
+    """
     repo = Repo.query.get_or_404(repo_id)
 
-    # Fetch metrics for this repository
     metrics_response = requests.get(f"{BASE_API_URL}/metrics")
     if metrics_response.status_code == 200:
         metrics = metrics_response.json()
-
-        # Filter metrics for the specific repository
         repo_metrics = next((m for m in metrics if m["repo_url"] == repo.url), None)
 
         if repo_metrics:
@@ -152,11 +213,18 @@ def show_metrics(repo_id):
 
 @app.route("/repos/<int:repo_id>/refresh", methods=["POST"])
 def refresh_metrics(repo_id):
-    # Fetch the repository by ID
+    """
+    Refresh metrics for a specific repository by its ID.
+
+    Args:
+        repo_id (int): The ID of the repository.
+
+    Returns:
+        Redirect to the repository list page.
+    """
     repo = Repo.query.get_or_404(repo_id)
 
     try:
-        # Refresh metrics for this repository
         metrics = asyncio.run(fetch_metrics([repo.url]))
         if metrics:
             repo.last_retrieved = datetime.utcnow()
