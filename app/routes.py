@@ -32,7 +32,7 @@ def add_repo():
         repo = save_repo(repo_url)
         print(f"Repository saved: {repo}")  # Debug log
         return (
-            jsonify({"message": f"Repository {repo.name} added!", "repo_id": repo.id}),
+            jsonify({"message": f"Repository {repo.url} added!", "repo_id": repo.id}),
             201,
         )
     except ValueError as e:
@@ -57,6 +57,10 @@ def delete_repo_by_id(repo_id):
             200: Repository successfully deleted.
             404: Repository not found.
     """
+    repo = db.session.get(Repo, repo_id)
+    if not repo:
+        return jsonify({"error": "Repository not found."}), 404
+
     if delete_repo(repo_id):
         return jsonify({"message": f"Repository {repo_id} deleted successfully."}), 200
     return jsonify({"error": "Repository not found."}), 404

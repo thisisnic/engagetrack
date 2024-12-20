@@ -73,7 +73,7 @@ def delete_repo(repo_id):
     Returns:
         bool: True if the repository was successfully deleted, False otherwise.
     """
-    repo = Repo.query.get(repo_id)
+    repo = db.session.get(Repo, repo_id)
     if repo:
         db.session.delete(repo)
         db.session.commit()
