@@ -4,4 +4,5 @@ aiohttp>=3.7.4
 matplotlib>=3.4.2
 pytest>=6.2.4
 pytest-asyncio>=0.15.1
+requests>=2.25.1
 sqlalchemy>=1.4.15
