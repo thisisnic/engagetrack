@@ -3,13 +3,15 @@ from app import db
 import os
 import requests
 
-GITHUB_TOKEN = os.getenv('GH_API_TOKEN')
+GITHUB_TOKEN = os.getenv("GH_API_TOKEN")
+
 
 class Repo(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(128), nullable=False)
     url = db.Column(db.String(256), unique=True, nullable=False)
-    last_retrieved = db.Column(db.DateTime, default=None) 
+    last_retrieved = db.Column(db.DateTime, default=None)
+
 
 def save_repo(repo_url):
     # Validate that the repository exists on GitHub
@@ -20,10 +22,12 @@ def save_repo(repo_url):
     if response.status_code == 404:
         raise ValueError(f"Repository {repo_url} does not exist on GitHub.")
     elif response.status_code != 200:
-        raise ValueError(f"GitHub API error: {response.status}. Please try again later.")
+        raise ValueError(
+            f"GitHub API error: {response.status}. Please try again later."
+        )
 
     # Extract repository name from URL
-    repo_name = repo_url.split('/')[-1]
+    repo_name = repo_url.split("/")[-1]
 
     # Check if the repository already exists in the database
     existing_repo = Repo.query.filter_by(url=repo_url).first()
@@ -45,6 +49,15 @@ def delete_repo(repo_id):
         return True
     return False
 
+
 def fetch_all_repos():
     repos = Repo.query.all()
-    return [{"id": repo.id, "name": repo.name, "url": repo.url, "last_retrieved": repo.last_retrieved} for repo in repos]
+    return [
+        {
+            "id": repo.id,
+            "name": repo.name,
+            "url": repo.url,
+            "last_retrieved": repo.last_retrieved,
+        }
+        for repo in repos
+    ]

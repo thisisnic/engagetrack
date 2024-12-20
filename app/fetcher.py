@@ -3,13 +3,16 @@ import asyncio
 from datetime import datetime, timedelta
 import os
 
-GITHUB_TOKEN = os.getenv('GH_API_TOKEN')
+GITHUB_TOKEN = os.getenv("GH_API_TOKEN")
+
 
 async def fetch_contributors(repo_url):
     async with aiohttp.ClientSession() as session:
         try:
             if not GITHUB_TOKEN:
-                raise ValueError("GitHub API token not found. Set GH_API_TOKEN in your environment.")
+                raise ValueError(
+                    "GitHub API token not found. Set GH_API_TOKEN in your environment."
+                )
 
             # Calculate the date 3 months ago
             three_months_ago = datetime.now() - timedelta(days=90)
@@ -27,16 +30,23 @@ async def fetch_contributors(repo_url):
                     # Count contributions per author
                     contributors = {}
                     for commit in commits:
-                        author = commit.get('commit', {}).get('author', {}).get('name')
+                        author = commit.get("commit", {}).get("author", {}).get("name")
                         if author:
                             contributors[author] = contributors.get(author, 0) + 1
 
                     # Sort contributors by contributions and take the top 10
-                    top_contributors = sorted(contributors.items(), key=lambda x: x[1], reverse=True)[:10]
-                    return [{"login": contributor[0], "contributions": contributor[1]} for contributor in top_contributors]
+                    top_contributors = sorted(
+                        contributors.items(), key=lambda x: x[1], reverse=True
+                    )[:10]
+                    return [
+                        {"login": contributor[0], "contributions": contributor[1]}
+                        for contributor in top_contributors
+                    ]
 
                 elif response.status == 403:
-                    raise Exception("GitHub API rate limit exceeded. Ensure your token has sufficient quota.")
+                    raise Exception(
+                        "GitHub API rate limit exceeded. Ensure your token has sufficient quota."
+                    )
                 else:
                     raise Exception(f"GitHub API error: {response.status}")
 
@@ -53,17 +63,15 @@ async def fetch_issues(repo_url):
                 return await response.json()
             return {"error": f"Failed to fetch issues for {repo_url}"}
 
+
 async def fetch_metrics(repo_urls):
     tasks = []
     for repo_url in repo_urls:
-        tasks.append(fetch_contributors(repo_url))  
+        tasks.append(fetch_contributors(repo_url))
     results = await asyncio.gather(*tasks)
 
     metrics = []
     for i, repo_url in enumerate(repo_urls):
         contributors = results[i]
-        metrics.append({
-            "repo_url": repo_url,
-            "contributors": contributors
-        })
+        metrics.append({"repo_url": repo_url, "contributors": contributors})
     return metrics
